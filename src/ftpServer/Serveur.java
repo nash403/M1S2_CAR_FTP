@@ -1,13 +1,12 @@
 package ftpServer;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.Arrays;
-
 
 /**
+ * Class containing the main method
+ * 
  * @author nintunze et delvallet
  * 
  */
@@ -26,15 +25,11 @@ public class Serveur {
 		ServerSocket serveur;
 		try {
 			serveur = new ServerSocket(1111);
-			System.out
-					.println("démarrage du serveur sur le port 1111, dossier root: "
-							+ root);
-//			System.out.println("root : "+Arrays.toString(new File(root).list()));
+			System.out.println("démarrage du serveur sur le port 1111, dossier root: " + root);
 
 			while (true) {
 				Socket client = serveur.accept();
-				System.out
-						.println("Nouveau client: " + client.getInetAddress());
+				System.out.println("Nouveau client: " + client.getInetAddress());
 				FtpRequest ftpRequest = new FtpRequest();
 				ftpRequest.init(client, root, authHandler);
 				ftpRequest.start();

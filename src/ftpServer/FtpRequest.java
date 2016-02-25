@@ -1,26 +1,17 @@
 package ftpServer;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 /**
- * @author nintunze et delvallet
+ * Class for processing request incoming from a client
+ * 
+ * @author honore nintunze and lucas delvallet
  *
  */
 public class FtpRequest extends Thread {
@@ -159,7 +150,6 @@ public class FtpRequest extends Thread {
 
 	protected void processSIZE(String file) {
 		System.out.println("    Process SIZE");
-		// File str = new File(this.current_wd.getAbsolutePath() + "/" + file);
 		try {
 			envoie(200 + " " + fileOperationManager.getFileSize(file));
 		} catch (IOException e) {
@@ -170,8 +160,7 @@ public class FtpRequest extends Thread {
 
 	protected void processPWD() {
 		System.out.println("    Process PWD");
-		// String res = getWD();
-		
+
 		if (fileOperationManager != null)
 			envoie(257 + " \"" + fileOperationManager.getWD() + "\"");
 		else
@@ -220,27 +209,9 @@ public class FtpRequest extends Thread {
 	}
 
 	protected void processRETR(String file) {
-//		try {
-//			File f_to_send = new File(this.current_wd.getAbsolutePath() + "/" + file);
-//			System.out.println("retr file " + f_to_send.getAbsolutePath());
-//			byte[] bytearray = new byte[(int) f_to_send.length()];
-//			FileInputStream fis = new FileInputStream(f_to_send);
-//			BufferedInputStream bis = new BufferedInputStream(fis);
-//			bis.read(bytearray, 0, bytearray.length);
-//			System.out.println("byte" + dataClient);
-//			envoie(150, "File status okay; about to open data connection and start transfert.");
-//			this.dataClient.getOutputStream().write(bytearray, 0, bytearray.length);
-//			this.dataClient.getOutputStream().flush();
-//			envoie(226, "Closing data connection. Requested file action successful");
-//			bis.close();
-//			fis.close();
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//			envoie(426, "Connection closed; transfer aborted.");
-//		}
 		System.out.println("    Process RETR");
 		if (dataManager != null && !dataManager.isClosed)
-			this.dataManager.ask("RETR",file);
+			this.dataManager.ask("RETR", file);
 		else
 			envoie(FtpResponse.user_ko);
 
@@ -249,35 +220,15 @@ public class FtpRequest extends Thread {
 	protected void processSTOR(String file) {
 		System.out.println("    Process STOR");
 		if (dataManager != null && !dataManager.isClosed)
-			this.dataManager.ask("STOR",file);
+			this.dataManager.ask("STOR", file);
 		else
 			envoie(FtpResponse.user_ko);
-//		try {
-//			InputStream data = this.dataClient.getInputStream();
-//			byte[] bytearray = new byte[2048];
-//			data.read(bytearray);
-//			File f_to_store = new File(this.current_wd.getAbsolutePath() + "/" + file);
-//			if (!f_to_store.exists())
-//				f_to_store.createNewFile();
-//			System.out.println("stor file " + f_to_store.getAbsolutePath());
-//			FileOutputStream fis = new FileOutputStream(f_to_store);
-//			BufferedOutputStream bis = new BufferedOutputStream(fis);
-//			envoie(150, "File status okay; about to open data connection and start transfert.");
-//			bis.write(bytearray, 0, bytearray.length);
-//
-//			envoie(226, "Closing data connection. Requested file action successful");
-//			bis.close();
-//			fis.close();
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//			envoie(426, "Connection closed; transfer aborted.");
-//		}
 	}
 
 	protected void processLIST(String dir) {
 		System.out.println("    Process LIST");
 		if (dataManager != null && !dataManager.isClosed)
-			this.dataManager.ask("LIST",dir);
+			this.dataManager.ask("LIST", dir);
 		else
 			envoie(FtpResponse.user_ko);
 	}
@@ -289,50 +240,50 @@ public class FtpRequest extends Thread {
 	}
 
 	protected void processTYPEI() {
-		envoie(200+" Command OK");
+		envoie(200 + " Command OK");
 	}
-	
+
 	protected void processPORT(String localPort) {
 		String[] parsedInfo = localPort.split(",");
-		if (parsedInfo.length == 6){
-			String ip1 = parsedInfo[0],ip2 = parsedInfo[1],ip3 = parsedInfo[2],ip4 = parsedInfo[3],p1 = parsedInfo[4],p2 = parsedInfo[5];
-			
-			if (dataManager == null || dataManager.isClosed){
+		if (parsedInfo.length == 6) {
+			String ip1 = parsedInfo[0], ip2 = parsedInfo[1], ip3 = parsedInfo[2], ip4 = parsedInfo[3],
+					p1 = parsedInfo[4], p2 = parsedInfo[5];
+
+			if (dataManager == null || dataManager.isClosed) {
 				try {
-					String addrIP = ip1+"."+ip2+"."+ip3+"."+ip4;
-					int port = Integer.parseInt(p1)*256+Integer.parseInt(p2);
-					Socket s = new Socket(addrIP,port);
+					String addrIP = ip1 + "." + ip2 + "." + ip3 + "." + ip4;
+					int port = Integer.parseInt(p1) * 256 + Integer.parseInt(p2);
+					Socket s = new Socket(addrIP, port);
 					this.dataManager = new FtpDataManager(fileOperationManager, s, writer);
 					this.dataManager.start();
 					envoie(FtpResponse.port_ok);
 				} catch (IOException e) {
 					envoie(FtpResponse.connect_refused);
 				}
-			}
-			else envoie(FtpResponse.connect_denied);
-		}
-		else {
-			envoie(FtpResponse.arg_error+" Enter a port to connect to > ip1,ip2,ip3,ip4,port1,port2");
+			} else
+				envoie(FtpResponse.connect_denied);
+		} else {
+			envoie(FtpResponse.arg_error + " Enter a port to connect to > ip1,ip2,ip3,ip4,port1,port2");
 		}
 	}
 
 	protected void processPASV() {
 		System.out.println("	Process PASV");
-		if (this.dataManager == null || dataManager.isClosed){
-			
+		if (this.dataManager == null || dataManager.isClosed) {
+
 			try {
 				ServerSocket dataServerSocket = new ServerSocket(5654);
-				
-				envoie(FtpResponse.entering_pm+ " "+formatAddr(dataServerSocket.getInetAddress().getAddress(),dataServerSocket.getLocalPort()));
-				
+
+				envoie(FtpResponse.entering_pm + " "
+						+ formatAddr(dataServerSocket.getInetAddress().getAddress(), dataServerSocket.getLocalPort()));
+
 				this.dataManager = new FtpDataManager(fileOperationManager, dataServerSocket, writer);
-				this.dataManager.start();				
+				this.dataManager.start();
 			} catch (IOException e) {
 				envoie(FtpResponse.connect_error);
 				e.printStackTrace();
 			}
-		}
-		else {
+		} else {
 			envoie(FtpResponse.connect_denied);
 		}
 	}
@@ -347,7 +298,6 @@ public class FtpRequest extends Thread {
 		str += ')';
 		return str;
 	}
-
 
 	protected void kill() {
 		try {

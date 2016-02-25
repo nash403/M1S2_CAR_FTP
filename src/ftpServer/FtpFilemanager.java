@@ -13,6 +13,13 @@ import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+/**
+ * Class for managing file operation such as listing a directory, read or write
+ * a file, etc.
+ * 
+ * @author honore nintunze and lucas delvallet
+ *
+ */
 public class FtpFilemanager {
 
 	protected Path workingDir;
@@ -28,6 +35,7 @@ public class FtpFilemanager {
 	public String getWD() {
 		return this.workingDir.toFile().getName();
 	}
+
 	public String getFullWD() {
 		return this.workingDir.toFile().getAbsolutePath();
 	}
@@ -35,12 +43,6 @@ public class FtpFilemanager {
 	public String listFiles(String path) {
 		File file_to_test = new File(
 				transformPath((new File(this.workingDir.toString() + "/" + path)).getAbsolutePath()));
-		// System.out.println("File:[" + file_to_test.getName() + "," +
-		// this.root.getAbsolutePath() + ", /" + path
-		// + ",all:" + file_to_test.getAbsolutePath() + ", parent:" +
-		// file_to_test.getParent() + "] exists?:"
-		// + file_to_test.exists() + " is child?:" +
-		// isChildOfRoot(file_to_test.getAbsolutePath()));
 		File res = file_to_test.exists() && isChildOfRoot(file_to_test.getAbsolutePath())
 				? new File(this.workingDir.toString() + "/" + path) : this.root;
 		File files_in_dir[] = res.listFiles();
@@ -58,13 +60,6 @@ public class FtpFilemanager {
 	public String changeWD(String new_dir) {
 		File dir_to_test = new File(
 				transformPath((new File(this.workingDir.toString() + "/" + new_dir)).getAbsolutePath()));
-		// System.out.println("File:[" + dir_to_test.getName() + ", root:" +
-		// this.root.getAbsolutePath() + ", dir:/" + dir
-		// + ",all:" + dir_to_test.getAbsolutePath() + ", parent:" +
-		// dir_to_test.getParent() + ", trim:"
-		// + transformPath(dir_to_test.getAbsolutePath()) + "] exists?:" +
-		// dir_to_test.exists() + " is child?:"
-		// + isChildOfRoot(dir_to_test.getAbsolutePath()));
 		if (dir_to_test.exists() && dir_to_test.isDirectory()) {
 			if (!isChildOfRoot(dir_to_test.getAbsolutePath())) {
 				return FtpResponse.denied_access + "" + this.workingDir.toFile().getName() + "/" + new_dir;
@@ -122,21 +117,15 @@ public class FtpFilemanager {
 
 	protected boolean isChildOfRoot(String child) {
 		String parent = this.root.getAbsolutePath();
-		// System.out.println("is child ?" + parent + " == " + child);
 		return child.startsWith(parent);
 	}
 
 	protected String transformPath(String path) {
 		String res = path, old = "";
-		// int count = 0;
 		while (res.contains("..") && !res.equals(old)) {
-			// System.out.println("inter " + res);
 			old = res;
 			res = res.replaceFirst("/[^/]*/[.][.]", "");
-			// count++;
-			// if (count ==10) System.exit(0);
 		}
-		// System.out.println("fin" + res);
 		return res;
 	}
 
