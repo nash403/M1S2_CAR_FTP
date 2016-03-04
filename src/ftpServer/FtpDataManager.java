@@ -17,7 +17,7 @@ import java.net.Socket;
  *
  */
 public class FtpDataManager extends Thread {
-	protected FtpFilemanager handler;
+	protected FtpFileManager handler;
 	protected ServerSocket serverSock;
 	protected Socket clientSock;
 	protected BufferedWriter writer;
@@ -25,17 +25,17 @@ public class FtpDataManager extends Thread {
 	protected String command;
 	public boolean isClosed;
 
-	public FtpDataManager(FtpFilemanager handler, Socket client, BufferedWriter writer) {
+	public FtpDataManager(FtpFileManager handler, Socket client, BufferedWriter writer) {
 		init(handler, writer);
 		this.clientSock = client;
 	}
 
-	public FtpDataManager(FtpFilemanager handler, ServerSocket sv, BufferedWriter writer) {
+	public FtpDataManager(FtpFileManager handler, ServerSocket sv, BufferedWriter writer) {
 		init(handler, writer);
 		this.serverSock = sv;
 	}
 
-	protected void init(FtpFilemanager handler, BufferedWriter writer) {
+	protected void init(FtpFileManager handler, BufferedWriter writer) {
 		this.handler = handler;
 		this.writer = writer;
 		this.arg = null;

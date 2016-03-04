@@ -12,7 +12,7 @@ import java.net.Socket;
  * Class for processing request incoming from a client
  * 
  * @author honore nintunze and lucas delvallet
- *
+ * 
  */
 public class FtpRequest extends Thread {
 
@@ -23,23 +23,27 @@ public class FtpRequest extends Thread {
 	protected String root = null;
 	protected AuthHandler authHandler;
 	protected FtpDataManager dataManager;
-	protected FtpFilemanager fileOperationManager;
+	protected FtpFileManager fileOperationManager;
 	protected boolean islistening;
 
-	public FtpRequest(Socket client, String root, AuthHandler authHandler) throws IOException {
+	public FtpRequest(Socket client, String root, AuthHandler authHandler)
+			throws IOException {
 		this.init(client, root, authHandler);
 	}
 
 	public FtpRequest() {
 	}
 
-	public void init(Socket client, String root, AuthHandler authHandler) throws IOException {
+	public void init(Socket client, String root, AuthHandler authHandler)
+			throws IOException {
 		this.client = client;
 		this.root = root;
 		this.authHandler = authHandler;
 		this.islistening = true;
-		reader = new BufferedReader(new InputStreamReader(this.client.getInputStream()));
-		writer = new BufferedWriter(new OutputStreamWriter(this.client.getOutputStream()));
+		reader = new BufferedReader(new InputStreamReader(
+				this.client.getInputStream()));
+		writer = new BufferedWriter(new OutputStreamWriter(
+				this.client.getOutputStream()));
 	}
 
 	@Override
@@ -122,7 +126,8 @@ public class FtpRequest extends Thread {
 				if (commands.length == 2) {
 					processPORT(commands[1]);
 				} else {
-					envoie(FtpResponse.arg_error + " Enter a port to connect to > ip1,ip2,ip3,ip4,port1,port2");
+					envoie(FtpResponse.arg_error
+							+ " Enter a port to connect to > ip1,ip2,ip3,ip4,port1,port2");
 					return false;
 				}
 				break;
@@ -186,8 +191,10 @@ public class FtpRequest extends Thread {
 	}
 
 	protected void processPASS(String pass) {
-		System.out.println("	Process PASS : " + pass + " | for user " + clientId);
-		if ((this.fileOperationManager != null) || authHandler.isAuthenticated(clientId)) {
+		System.out.println("	Process PASS : " + pass + " | for user "
+				+ clientId);
+		if ((this.fileOperationManager != null)
+				|| authHandler.isAuthenticated(clientId)) {
 			envoie(FtpResponse.user_already_in);
 		} else if (authHandler.connect(clientId, pass)) {
 			initSession();
@@ -199,7 +206,7 @@ public class FtpRequest extends Thread {
 
 	protected void initSession() {
 		try {
-			this.fileOperationManager = new FtpFilemanager(clientId, this.root);
+			this.fileOperationManager = new FtpFileManager(clientId, this.root);
 			envoie(FtpResponse.pass_ok);
 		} catch (IOException e) {
 			System.err.println("unable to access the file system");
@@ -246,15 +253,16 @@ public class FtpRequest extends Thread {
 	protected void processPORT(String localPort) {
 		String[] parsedInfo = localPort.split(",");
 		if (parsedInfo.length == 6) {
-			String ip1 = parsedInfo[0], ip2 = parsedInfo[1], ip3 = parsedInfo[2], ip4 = parsedInfo[3],
-					p1 = parsedInfo[4], p2 = parsedInfo[5];
+			String ip1 = parsedInfo[0], ip2 = parsedInfo[1], ip3 = parsedInfo[2], ip4 = parsedInfo[3], p1 = parsedInfo[4], p2 = parsedInfo[5];
 
 			if (dataManager == null || dataManager.isClosed) {
 				try {
 					String addrIP = ip1 + "." + ip2 + "." + ip3 + "." + ip4;
-					int port = Integer.parseInt(p1) * 256 + Integer.parseInt(p2);
+					int port = Integer.parseInt(p1) * 256
+							+ Integer.parseInt(p2);
 					Socket s = new Socket(addrIP, port);
-					this.dataManager = new FtpDataManager(fileOperationManager, s, writer);
+					this.dataManager = new FtpDataManager(fileOperationManager,
+							s, writer);
 					this.dataManager.start();
 					envoie(FtpResponse.port_ok);
 				} catch (IOException e) {
@@ -263,7 +271,8 @@ public class FtpRequest extends Thread {
 			} else
 				envoie(FtpResponse.connect_denied);
 		} else {
-			envoie(FtpResponse.arg_error + " Enter a port to connect to > ip1,ip2,ip3,ip4,port1,port2");
+			envoie(FtpResponse.arg_error
+					+ " Enter a port to connect to > ip1,ip2,ip3,ip4,port1,port2");
 		}
 	}
 
@@ -274,10 +283,13 @@ public class FtpRequest extends Thread {
 			try {
 				ServerSocket dataServerSocket = new ServerSocket(5654);
 
-				envoie(FtpResponse.entering_pm + " "
-						+ formatAddr(dataServerSocket.getInetAddress().getAddress(), dataServerSocket.getLocalPort()));
+				envoie(FtpResponse.entering_pm
+						+ " "
+						+ formatAddr(dataServerSocket.getInetAddress()
+								.getAddress(), dataServerSocket.getLocalPort()));
 
-				this.dataManager = new FtpDataManager(fileOperationManager, dataServerSocket, writer);
+				this.dataManager = new FtpDataManager(fileOperationManager,
+						dataServerSocket, writer);
 				this.dataManager.start();
 			} catch (IOException e) {
 				envoie(FtpResponse.connect_error);
@@ -320,10 +332,10 @@ public class FtpRequest extends Thread {
 
 	protected void envoie(String msg) {
 		try {
-			System.out.println("	Message sent to client: " + msg);
 			writer.write(msg);
 			writer.newLine();
 			writer.flush();
+			System.out.println("	Message sent to client: " + msg);
 		} catch (IOException e) {
 			System.out.println("Can't send message " + msg + ": broken pipe.");
 		}

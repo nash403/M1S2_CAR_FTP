@@ -1,18 +1,9 @@
 package test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 import org.junit.Test;
 
@@ -25,66 +16,69 @@ public class TestFtpFileManager {
 	public void testGetWD() {
 		try {
 			FtpFileManager FFM = new FtpFileManager("", "");
-			assertEquals("ftproot", FFM.getWD());	
+			assertEquals("ftproot", FFM.getWD());
 		} catch (IOException e) {
-			//Not supposed to happen
+			// Not supposed to happen
 		}
 	}
-	
+
 	@Test
-	public void testGetFullWD(){
+	public void testGetFullWD() {
 		try {
 			FtpFileManager FFM = new FtpFileManager("", "");
-			assertEquals(new java.io.File("").getAbsolutePath() + "\\ftproot", FFM.getFullWD());	
+			assertEquals(new java.io.File("").getAbsolutePath() + "/ftproot",
+					FFM.getFullWD());
 		} catch (IOException e) {
-			//Not supposed to happen
+			// Not supposed to happen
 		}
 	}
-	
+
 	@Test
-	public void testChangeWDIfFolderExist(){
+	public void testChangeWDIfFolderExist() {
 		try {
 			FtpFileManager FFM = new FtpFileManager("", "");
 			String testFolder = "testDir";
-			File dir = new File(new java.io.File("").getAbsolutePath() + "\\ftproot\\" + testFolder);
+			File dir = new File(new java.io.File("").getAbsolutePath()
+					+ "/ftproot/" + testFolder);
 			dir.mkdir();
-			
-			assertEquals(FtpResponse.cwd_ok,FFM.changeWD(testFolder));
+
+			assertEquals(FtpResponse.cwd_ok, FFM.changeWD(testFolder));
 			dir.delete();
-	
+
 		} catch (IOException e) {
-			//Not supposed to happen
+			// Not supposed to happen
 		}
 	}
-	
+
 	@Test
-	public void testChangeWDIfNavigationWork(){
+	public void testChangeWDIfNavigationWork() {
 		try {
 			FtpFileManager FFM = new FtpFileManager("", "");
 			String testFolder = "testDir";
-			File dir = new File(new java.io.File("").getAbsolutePath() + "\\ftproot\\" + testFolder);
+			File dir = new File(new java.io.File("").getAbsolutePath()
+					+ "/ftproot/" + testFolder);
 			dir.mkdir();
 			FFM.changeWD(testFolder);
-			
+
 			assertEquals(testFolder, FFM.getWD());
 			dir.delete();
-	
+
 		} catch (IOException e) {
-			//Not supposed to happen
+			// Not supposed to happen
 		}
 	}
-	
+
 	@Test
-	public void testChangeWDIfFolderDontExist(){
+	public void testChangeWDIfFolderDontExist() {
 		try {
 			FtpFileManager FFM = new FtpFileManager("", "");
 			String testFolder = "UnexistentDir";
 
-			assertEquals(FtpResponse.no_such_file+"ftproot/"+testFolder,FFM.changeWD(testFolder));
+			assertEquals(FtpResponse.no_such_file + "ftproot/" + testFolder,
+					FFM.changeWD(testFolder));
 
-	
 		} catch (IOException e) {
-			//Not supposed to happen
+			// Not supposed to happen
 		}
 	}
 

@@ -20,12 +20,12 @@ import java.util.Date;
  * @author honore nintunze and lucas delvallet
  *
  */
-public class FtpFilemanager {
+public class FtpFileManager {
 
 	protected Path workingDir;
 	protected File root;
 
-	public FtpFilemanager(String clientId, String root) throws IOException {
+	public FtpFileManager(String clientId, String root) throws IOException {
 		this.root = new File(root);
 		this.workingDir = Paths.get("ftproot/");
 		Files.createDirectories(this.workingDir);
