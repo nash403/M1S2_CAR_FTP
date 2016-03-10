@@ -33,9 +33,9 @@ public class FtpResponse {
 	public static final String entering_pm = 227 + " Entering Passive Mode";
 	public static final String cwd_ok = 250 + " Okay.";
 	public static final String connect_error = 10061
-			+ " Cannot connect to remote server. The connection is actively refused by the server.";
+			+ " Cannot connect to remote server due to error. The connection is actively refused by the server.";
 	public static String connect_refused = 10061
-			+ " Cannot connect to remote server. The connection is actively refused by the server.";
+			+ " Refused to connect to remote server. The connection is actively refused by the server.";
 	public static final String connect_denied = 421 + " You are not authorized to make the connection.";
 	public static String port_ok = 200 + " Port command successful";
 }

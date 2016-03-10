@@ -50,7 +50,7 @@ public class FtpRequest extends Thread {
 	public void run() {
 		envoie(FtpResponse.connect_ok);
 		String new_request = "";
-		while (this.islistening) {
+		while (this.islistening && this.client != null && !this.client.isClosed()) {
 			try {
 				if ((new_request = this.reader.readLine()) != null) {
 					System.out.println("Requete reçu " + new_request);
@@ -251,6 +251,7 @@ public class FtpRequest extends Thread {
 	}
 
 	protected void processPORT(String localPort) {
+		System.out.println("Starting PORT with "+localPort);
 		String[] parsedInfo = localPort.split(",");
 		if (parsedInfo.length == 6) {
 			String ip1 = parsedInfo[0], ip2 = parsedInfo[1], ip3 = parsedInfo[2], ip4 = parsedInfo[3], p1 = parsedInfo[4], p2 = parsedInfo[5];
@@ -267,6 +268,7 @@ public class FtpRequest extends Thread {
 					envoie(FtpResponse.port_ok);
 				} catch (IOException e) {
 					envoie(FtpResponse.connect_refused);
+					e.printStackTrace();
 				}
 			} else
 				envoie(FtpResponse.connect_denied);
@@ -332,8 +334,8 @@ public class FtpRequest extends Thread {
 
 	protected void envoie(String msg) {
 		try {
-			writer.write(msg);
-			writer.newLine();
+			writer.write(msg+"\r\n");
+			//writer.newLine();
 			writer.flush();
 			System.out.println("	Message sent to client: " + msg);
 		} catch (IOException e) {

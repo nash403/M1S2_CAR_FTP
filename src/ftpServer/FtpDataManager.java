@@ -112,7 +112,7 @@ public class FtpDataManager extends Thread {
 	}
 
 	protected void processLIST() {
-		System.out.println("    Starting LIST");
+		System.out.println("    Starting LIST with "+arg);
 		send(writer, FtpResponse.file_status_ok);
 		try {
 			BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(clientSock.getOutputStream()));
@@ -140,8 +140,8 @@ public class FtpDataManager extends Thread {
 
 	protected void send(BufferedWriter w, String msg) {
 		try {
-			w.write(msg);
-			w.newLine();
+			w.write(msg +"\r\n");
+			//w.newLine();
 			w.flush();
 		} catch (IOException e) {
 			System.err.println("	-> can't send message :" + msg);
@@ -152,6 +152,7 @@ public class FtpDataManager extends Thread {
 	protected synchronized void waitConnexion() {
 		if (clientSock == null)
 			try {
+				System.out.println("	FtpDataManager waiting for a connexion");
 				this.clientSock = this.serverSock.accept();
 			} catch (IOException e) {
 				System.err.println("	-> Error wait connexion");

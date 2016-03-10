@@ -27,7 +27,7 @@ public class FtpFileManager {
 
 	public FtpFileManager(String clientId, String root) throws IOException {
 		this.root = new File(root);
-		this.workingDir = Paths.get("ftproot/");
+		this.workingDir = Paths.get(root);//"ftproot/");
 		Files.createDirectories(this.workingDir);
 
 	}
@@ -41,14 +41,18 @@ public class FtpFileManager {
 	}
 
 	public String listFiles(String path) {
+		path = path == null ? "" : path;
 		File file_to_test = new File(
 				transformPath((new File(this.workingDir.toString() + "/" + path)).getAbsolutePath()));
 		File res = file_to_test.exists() && isChildOfRoot(file_to_test.getAbsolutePath())
 				? new File(this.workingDir.toString() + "/" + path) : this.root;
 		File files_in_dir[] = res.listFiles();
+		System.out.println("listfiles "+res+" - "+(this.workingDir.toString() + "/" + path)+" - "+files_in_dir.length);
 		String message = " Directory /" + res.getName() + ":\n ";
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+		
 		for (File file : files_in_dir) {
+			System.out.println("A file "+file);
 			message += (file.isDirectory() ? file.getName() + "/" : file.getName()) + "\t"
 					+ dateFormat.format(new Date(file.lastModified()))
 					+ (file.isFile() ? "\t" + file.length() + " octets" : "") + "\n ";
