@@ -71,8 +71,8 @@ public class FtpDataManager extends Thread {
 	protected void processRETR() {
 		System.out.println("    Starting RETR with " + this.arg);
 		try {
-			File f_to_send = new File(handler.getFullWD() + "/" + this.arg);
-			System.out.println("	file to retr " + handler.getFullWD() + "/" + this.arg);
+			File f_to_send = new File(handler.getFullWD() + File.separator + this.arg);
+			System.out.println("	file to retr " + handler.getFullWD() + File.separator + this.arg);
 			if (f_to_send.exists()) {
 				send(writer, FtpResponse.file_status_ok);
 			}
@@ -92,8 +92,8 @@ public class FtpDataManager extends Thread {
 	protected void processSTOR() {
 		System.out.println("    Starting STOR with " + this.arg);
 		try {
-			File f_to_store = new File(handler.getFullWD() + "/" + this.arg);
-			System.out.println("	file to store " + handler.getFullWD() + "/" + this.arg);
+			File f_to_store = new File(handler.getFullWD() + File.separator + this.arg);
+			System.out.println("	file to store " + handler.getFullWD() + File.separator + this.arg);
 			send(writer, FtpResponse.file_status_ok);
 			if (!f_to_store.exists()) {
 				f_to_store.createNewFile();

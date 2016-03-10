@@ -43,17 +43,17 @@ public class FtpFileManager {
 	public String listFiles(String path) {
 		path = path == null ? "" : path;
 		File file_to_test = new File(
-				transformPath((new File(this.workingDir.toString() + "/" + path)).getAbsolutePath()));
+				transformPath((new File(this.workingDir.toString() + File.separator + path)).getAbsolutePath()));
 		File res = file_to_test.exists() && isChildOfRoot(file_to_test.getAbsolutePath())
-				? new File(this.workingDir.toString() + "/" + path) : this.root;
+				? new File(this.workingDir.toString() + File.separator + path) : this.root;
 		File files_in_dir[] = res.listFiles();
-		System.out.println("listfiles "+res+" - "+(this.workingDir.toString() + "/" + path)+" - "+files_in_dir.length);
-		String message = " Directory /" + res.getName() + ":\n ";
+		System.out.println("listfiles "+res+" - "+(this.workingDir.toString() + File.separator + path)+" - "+files_in_dir.length);
+		String message = " Directory " + File.separator + res.getName() + ":\n ";
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 		
 		for (File file : files_in_dir) {
 			System.out.println("A file "+file);
-			message += (file.isDirectory() ? file.getName() + "/" : file.getName()) + "\t"
+			message += (file.isDirectory() ? file.getName() + File.separator : file.getName()) + "\t"
 					+ dateFormat.format(new Date(file.lastModified()))
 					+ (file.isFile() ? "\t" + file.length() + " octets" : "") + "\n ";
 		}
@@ -63,17 +63,17 @@ public class FtpFileManager {
 
 	public String changeWD(String new_dir) {
 		File dir_to_test = new File(
-				transformPath((new File(this.workingDir.toString() + "/" + new_dir)).getAbsolutePath()));
+				transformPath((new File(this.workingDir.toString() + File.separator + new_dir)).getAbsolutePath()));
 		if (dir_to_test.exists() && dir_to_test.isDirectory()) {
 			if (!isChildOfRoot(dir_to_test.getAbsolutePath())) {
-				return FtpResponse.denied_access + "" + this.workingDir.toFile().getName() + "/" + new_dir;
+				return FtpResponse.denied_access + "" + this.workingDir.toFile().getName() + File.separator + new_dir;
 			} else {
 				this.workingDir = dir_to_test.toPath();
 				System.out.println("cwd -> " + workingDir.toString());
 				return FtpResponse.cwd_ok;
 			}
 		} else {
-			return FtpResponse.no_such_file + "" + this.workingDir.toString() + "/" + new_dir;
+			return FtpResponse.no_such_file + "" + this.workingDir.toString() + File.separator + new_dir;
 		}
 	}
 
@@ -116,7 +116,7 @@ public class FtpFileManager {
 
 	public long getFileSize(String file) throws IOException {
 
-		return Files.size(Paths.get(this.workingDir.toAbsolutePath() + "/" + file));
+		return Files.size(Paths.get(this.workingDir.toAbsolutePath() + File.separator + file));
 	}
 
 	protected boolean isChildOfRoot(String child) {
