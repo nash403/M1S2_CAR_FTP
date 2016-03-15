@@ -47,17 +47,17 @@ public class FtpFileManager {
 		File res = file_to_test.exists() && isChildOfRoot(file_to_test.getAbsolutePath())
 				? new File(this.workingDir.toString() + File.separator + path) : this.root;
 		File files_in_dir[] = res.listFiles();
-		System.out.println("listfiles "+res+" - "+(this.workingDir.toString() + File.separator + path)+" - "+files_in_dir.length);
-		String message = " Directory " + File.separator + res.getName() + ":\n ";
-		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+		System.out.println("listing files in: "+res+" - full path: "+(this.workingDir.toString() + File.separator + path)+" - nb entries: "+files_in_dir.length);
+		String message = "total " +files_in_dir.length+ "\n";
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm");
 		
 		for (File file : files_in_dir) {
-			System.out.println("A file "+file);
-			message += (file.isDirectory() ? file.getName() + File.separator : file.getName()) + "\t"
-					+ dateFormat.format(new Date(file.lastModified()))
-					+ (file.isFile() ? "\t" + file.length() + " octets" : "") + "\n ";
+			System.out.println("\t->"+file);
+			message += (file.isDirectory() ? "drw-rw-r-- 1\tauser\tauser":"-rw-rw-r-- 1\tuser\tuser") + "\t"
+					+ file.length() + "\t"
+					+ dateFormat.format(new Date(file.lastModified())) +"\t"
+					+ (file.isDirectory() ? file.getName() + File.separator : file.getName()) + "\n";
 		}
-		message = message.substring(0, message.length() - " ".length());
 		return message;
 	}
 

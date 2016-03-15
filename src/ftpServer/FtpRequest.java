@@ -142,6 +142,9 @@ public class FtpRequest extends Thread {
 			case "TYPE":
 				processTYPEI();
 				break;
+			case "SYST":
+				processSYST();
+				break;
 			default:
 				envoie(FtpResponse.no_command);
 				return false;
@@ -151,6 +154,12 @@ public class FtpRequest extends Thread {
 			envoie(FtpResponse.no_command);
 			return false;
 		}
+	}
+
+	protected void processSYST() {
+		System.out.println("    Process SYST");
+		envoie(FtpResponse.syst_type);
+		
 	}
 
 	protected void processSIZE(String file) {

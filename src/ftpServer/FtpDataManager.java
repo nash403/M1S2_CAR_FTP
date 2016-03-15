@@ -85,6 +85,7 @@ public class FtpDataManager extends Thread {
 		} catch (IOException e) {
 			System.out.println("	-> err STOR IOException");
 			System.err.println(e.getMessage());
+			send(writer,FtpResponse.transfer_aborted);
 		}
 
 	}
@@ -107,6 +108,7 @@ public class FtpDataManager extends Thread {
 		} catch (IOException e) {
 			System.out.println("	-> err STOR IOException");
 			System.err.println(e.getMessage());
+			send(writer,FtpResponse.transfer_aborted);
 		}
 
 	}
@@ -116,7 +118,7 @@ public class FtpDataManager extends Thread {
 		send(writer, FtpResponse.file_status_ok);
 		try {
 			BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(clientSock.getOutputStream()));
-			send(bw, 200 + this.handler.listFiles(arg) + "200 END.");
+			send(bw, 200 + " " + this.handler.listFiles(arg) + "200 END.");
 			send(writer, FtpResponse.file_action_success);
 			bw.close();
 
