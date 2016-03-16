@@ -1,5 +1,6 @@
 package ftpServer;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -20,12 +21,18 @@ public class Serveur {
 		AuthHandler authHandler = new AuthHandler();
 		authHandler.addIdentifiant("Bobby", "123");
 		authHandler.addIdentifiant("Pierre-Richard-Alexandre", "azertyui");
-		String root = args[0];
+		String root;
+		if (args.length == 0){
+			root = System.getProperty("user.dir") + File.separator + "ftproot";
+		}
+		else {
+			root = args[0];
+		}
 
 		ServerSocket serveur;
 		try {
 			serveur = new ServerSocket(1111);
-			System.out.println("démarrage du serveur sur le port 1111, dossier root: " + root);
+			System.out.println("[SERVER READY] listening on port 1111 - root folder is : \"./" + root+"\"");
 
 			while (true) {
 				Socket client = serveur.accept();

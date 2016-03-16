@@ -27,7 +27,7 @@ public class FtpFileManager {
 
 	public FtpFileManager(String clientId, String root) throws IOException {
 		this.root = new File(root);
-		this.workingDir = Paths.get(root);//"ftproot/");
+		this.workingDir = Paths.get(root);
 		Files.createDirectories(this.workingDir);
 
 	}
